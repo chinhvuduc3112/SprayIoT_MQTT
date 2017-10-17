@@ -1,0 +1,14 @@
+{
+  "name": "MQTT-Test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "author": "Chorim",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3",
+    "mongoose": "^4.11.11",
+    "mosca": "^2.3.0",
+    "mows": "0.0.6"
+  }
+}

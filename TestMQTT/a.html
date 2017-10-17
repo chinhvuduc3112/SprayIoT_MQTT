@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <script src="/mqtt.js"></script>
+    <style>
+      #container {
+        width: 800px;
+        height: 800px;
+        margin: 0 auto;
+        margin-top: 100px;
+        border: 1px solid #4d90fe;
+      }
+      #wrap {
+        margin: 10px;
+      }
+      #node6 {
+        width: 10px;
+        height: 10px;
+        background-color: #4d90fe;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="wrap">
+          <div id="node6"></div>
+      </div>
+    </div>
+    <script>
+      function changeLoc(top, left, status) {
+        document.getElementById("node6").style.marginTop = top;
+        document.getElementById("node6").style.marginLeft = left;
+        if (status == 1) {
+          document.getElementById("node6").style.backgroundColor = '#F48024';
+        } else {
+          document.getElementById("node6").style.backgroundColor = '#4d90fe';
+        }
+      }
+      var client = mqtt.connect('ws://192.168.1.191:3000');
+
+      client.subscribe("updateloc");
+
+      client.on("message", function(topic, payload) {
+        console.log(payload.toString());
+        let data = JSON.parse(payload.toString());
+        let x = parseFloat(data.x) * 10;
+        let y = parseFloat(data.y) * 10;
+        let status = data.status;
+        changeLoc(x, y, status);
+        // alert([topic, payload].join(": "));
+        // client.end();
+      });
+
+      client.publish("mqtt/demo", "hello world!");
+    </script>
+  </body>
+</html>

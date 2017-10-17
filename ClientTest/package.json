@@ -1,0 +1,11 @@
+{
+  "name": "MQTTClient-Test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "author": "Chorim",
+  "license": "ISC",
+  "dependencies": {
+    "mosca": "^2.3.0"
+  }
+}
