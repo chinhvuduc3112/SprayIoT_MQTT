@@ -25,6 +25,7 @@ mqttServ.on('published', function(packet, client) {
     let deviceNodeId = data.deviceNodeId;
     let time = new Date(parseInt(data.time));
     let dataSen = data.data;
+    console.log(packet.payload.toString())
     models.dataSensor.create({
       deviceNodeId: deviceNodeId,
       time: time,
