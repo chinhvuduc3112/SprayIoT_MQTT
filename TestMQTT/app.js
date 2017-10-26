@@ -22,32 +22,34 @@ mqttServ.on('clientConnected', function(client) {
 mqttServ.on('published', function(packet, client) {
   if (packet.topic == '/addDataSensor') {
     let data = JSON.parse(packet.payload.toString());
-    let deviceNodeId = data.deviceNodeId;
+    let deviceNodeName = data.deviceNodeName;
     let time = new Date(parseInt(data.time));
     let dataSen = data.data;
     console.log(packet.payload.toString())
-    models.dataSensor.create({
-      deviceNodeId: deviceNodeId,
-      time: time,
-      data: dataSen,
-      trash: false,
+    models.deviceNode.findOneAndUpdate(
+      {name: deviceNodeName}, {
+      $set: {
+        data: dataSen
+      }
     }, (err, data) => {
       if (!err) {
-        models.deviceNode.update({_id: deviceNodeId}, {
-          $set: {
-            data: dataSen
-          }
+        models.dataSensor.create({
+          deviceNodeId: data.deviceNodeId,
+          time: time,
+          data: dataSen,
+          trash: false,
         }, (err, data) => {
           if (!err) {
             console.log('ok');
           } else {
             console.log(err);
           }
-        })
+        });
       } else {
         console.log(err);
       }
-    });
+    })
+    
     
   }
 });
