@@ -34,7 +34,7 @@ mqttServ.on('published', function(packet, client) {
     }, (err, data) => {
       if (!err) {
         models.dataSensor.create({
-          deviceNodeId: data.deviceNodeId,
+          deviceNodeId: data.deviceNodeId,//false findIdByName deviceNode, neu sai name deviceNode thi sai null id
           time: time,
           data: dataSen,
           trash: false,
