@@ -25,7 +25,6 @@ mqttServ.on('published', function(packet, client) {
     let deviceNodeName = data.deviceNodeName;
     let time = new Date(parseInt(data.time));
     let dataSen = data.data;
-    console.log(packet.payload.toString())
     models.deviceNode.findOneAndUpdate(
       {name: deviceNodeName}, {
       $set: {
@@ -33,18 +32,22 @@ mqttServ.on('published', function(packet, client) {
       }
     }, (err, data) => {
       if (!err) {
-        models.dataSensor.create({
-          deviceNodeId: data.deviceNodeId,//false findIdByName deviceNode, neu sai name deviceNode thi sai null id
-          time: time,
-          data: dataSen,
-          trash: false,
-        }, (err, data) => {
-          if (!err) {
-            console.log('ok');
-          } else {
-            console.log(err);
-          }
-        });
+        if (data !== null) {
+          models.dataSensor.create({
+            deviceNodeId: data._id,//false findIdByName deviceNode, neu sai name deviceNode thi sai null id
+            time: time,
+            data: dataSen,
+            trash: false,
+          }, (err, data) => {
+            if (!err) {
+              console.log('ok');
+            } else {
+              console.log(err);
+            }
+          });
+        } else {
+          console.log('err');
+        }
       } else {
         console.log(err);
       }

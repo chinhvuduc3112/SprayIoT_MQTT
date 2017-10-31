@@ -1,5 +1,5 @@
 var mqtt = require('mqtt')
-var client = mqtt.connect('mqtt://172.16.6.75')
+var client = mqtt.connect('mqtt://192.168.1.4')
 // ws://firstbrokerip:9001
 client.on('connect', function () {
   console.log('abc')
@@ -13,12 +13,12 @@ client.on('message', function (topic, message) {
 })
 
 // setInterval(() => {
-//   let data = {
-//     deviceNodeName: "Shum416303FF",
-//     time: 1508074757349,
-//     data: 123456
-//   };
-//   client.publish('/addDataSensor', JSON.stringify(data));
+  let data = {
+    deviceNodeName: "Shum0x416303FF",
+    time: 1508074757349,
+    data: 123456
+  };
+  client.publish('/addDataSensor', JSON.stringify(data));
 //   client.publish('/addDataSensor', JSON.stringify({
 //     deviceNodeName: "Lux416303FF",
 //     time: 1508074757349,
