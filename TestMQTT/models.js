@@ -93,7 +93,10 @@ module.exports = {
       default: new Date()
     },
     data: Number,
-    trash: Boolean
+    trash: {
+      type: Boolean,
+      default: false
+    }
   })),
 
   actuator: mongoose.model('Actuator', mongoose.Schema({
@@ -101,38 +104,46 @@ module.exports = {
     description: String,
     deviceTypeId: mongoose.Schema.Types.ObjectId,
     idArea: mongoose.Schema.Types.ObjectId,
-    deviceParent: mongoose.Schema.Types.ObjectId,
+    time: Number,
     status: Boolean,
     trash: Boolean
   })),
 
   function: mongoose.model('Function', mongoose.Schema({
+    name: String,
     actuatorId: mongoose.Schema.Types.ObjectId,
     status: Boolean,
     activityDuration: Number,
-    note: String,
+    description: String,
     trash: Boolean
   })),
 
   groupExecutionCondition: mongoose.model('GroupExecutionCondition', mongoose.Schema({
     name: String,
-    note: String,
+    description: String,
     functionId: mongoose.Schema.Types.ObjectId,
     trash: Boolean
   })),
 
   executionCondition: mongoose.model('ExecutionCondition', mongoose.Schema({
     name: String,
-    note: String,
+    description: String,
     groupExecutionConditionId: mongoose.Schema.Types.ObjectId,
     deviceNodeId: mongoose.Schema.Types.ObjectId,
-    compare: Number,
+    compare: Number, //0: bang; 1:nho hon; 2:lon hon
     compareValue: Number,
-    trash: Boolean
+    status: {
+      type: Boolean,
+      default: false
+    },
+    trash: {
+      type: Boolean,
+      default: false
+    }
   })),
 
-  historyAction: mongoose.model('GistoryAction', mongoose.Schema({
-    action: String,
+  historyAction: mongoose.model('HistoryAction', mongoose.Schema({
+    name: String,
     functionId: mongoose.Schema.Types.ObjectId,
     userId: mongoose.Schema.Types.ObjectId,
     trash: Boolean

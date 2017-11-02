@@ -15,7 +15,7 @@ client.on('message', function (topic, message) {
 // setInterval(() => {
   let data = {
     deviceNodeName: "Shum0x416303FF",
-    time: 1508074757349,
+    time: 1509551626733,
     data: 123456
   };
   client.publish('/addDataSensor', JSON.stringify(data));

@@ -7,6 +7,8 @@ var http     = require('http')
     , path = require('path')
     , mongoose = require('mongoose')
     , models = require('./models')
+    , DeviceNodeHandler = require('./DeviceNodeHandler')
+    
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/SprayIoT', {
@@ -25,33 +27,41 @@ mqttServ.on('published', function(packet, client) {
     let deviceNodeName = data.deviceNodeName;
     let time = new Date(parseInt(data.time));
     let dataSen = data.data;
-    models.deviceNode.findOneAndUpdate(
-      {name: deviceNodeName}, {
-      $set: {
-        data: dataSen
-      }
-    }, (err, data) => {
-      if (!err) {
-        if (data !== null) {
-          models.dataSensor.create({
-            deviceNodeId: data._id,//false findIdByName deviceNode, neu sai name deviceNode thi sai null id
-            time: time,
-            data: dataSen,
-            trash: false,
-          }, (err, data) => {
-            if (!err) {
-              console.log('ok');
-            } else {
-              console.log(err);
-            }
-          });
-        } else {
-          console.log('err');
-        }
-      } else {
-        console.log(err);
-      }
+
+    DeviceNodeHandler.updateDeviceNode(deviceNodeName, data).then(data => {
+      console.log(data);
+    }).catch(e => {
+      console.log(e);
     })
+    
+
+    // models.deviceNode.findOneAndUpdate(
+    //   {name: deviceNodeName}, {
+    //   $set: {
+    //     data: dataSen
+    //   }
+    // }, (err, data) => {
+    //   if (!err) {
+    //     if (data !== null) {
+    //       models.dataSensor.create({
+    //         deviceNodeId: data._id,//false findIdByName deviceNode, neu sai name deviceNode thi sai null id
+    //         time: time,
+    //         data: dataSen,
+    //         trash: false,
+    //       }, (err, data) => {
+    //         if (!err) {
+    //           console.log('ok');
+    //         } else {
+    //           console.log(err);
+    //         }
+    //       });
+    //     } else {
+    //       console.log('err');
+    //     }
+    //   } else {
+    //     console.log(err);
+    //   }
+    // })
     
     
   }
