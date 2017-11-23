@@ -8,6 +8,7 @@ var http     = require('http')
     , mongoose = require('mongoose')
     , models = require('./models')
     , DeviceNodeHandler = require('./DeviceNodeHandler')
+    , Buffer = require('buffer').Buffer;
     
 
 mongoose.Promise = global.Promise;
@@ -22,6 +23,8 @@ mqttServ.on('clientConnected', function(client) {
 
 // fired when a message is received
 mqttServ.on('published', function(packet, client) {
+  // console.log(packet);
+  
   if (packet.topic == '/addDataSensor') {
     let data = JSON.parse(packet.payload.toString());
     let deviceNodeName = data.deviceNodeName;
@@ -29,47 +32,31 @@ mqttServ.on('published', function(packet, client) {
     let dataSen = data.data;
 
     DeviceNodeHandler.updateDeviceNode(deviceNodeName, data).then(data => {
-      console.log(data);
+      let publishData = {
+        name: data.name,
+        id: data._id,
+        status: data.status,
+        time: data.time,
+        function: data.function
+      }
+      // console.log(publishData);
+      
+      let payload = Buffer.from(JSON.stringify(publishData), 'utf8');
+      let myPacket = packet;
+      myPacket.payload = payload;
+      myPacket.topic = '/function';
+      
+      mqttServ.publish(myPacket, client);
     }).catch(e => {
       console.log(e);
-    })
-    
-
-    // models.deviceNode.findOneAndUpdate(
-    //   {name: deviceNodeName}, {
-    //   $set: {
-    //     data: dataSen
-    //   }
-    // }, (err, data) => {
-    //   if (!err) {
-    //     if (data !== null) {
-    //       models.dataSensor.create({
-    //         deviceNodeId: data._id,//false findIdByName deviceNode, neu sai name deviceNode thi sai null id
-    //         time: time,
-    //         data: dataSen,
-    //         trash: false,
-    //       }, (err, data) => {
-    //         if (!err) {
-    //           console.log('ok');
-    //         } else {
-    //           console.log(err);
-    //         }
-    //       });
-    //     } else {
-    //       console.log('err');
-    //     }
-    //   } else {
-    //     console.log(err);
-    //   }
-    // })
-    
-    
+    });
   }
 });
 
 mqttServ.on('ready', () => {
   console.log('MQTT server is listen on port ' + 1883);
 });
+
 
 mqttServ.attachHttpServer(httpServ);
 app.use(express.static(path.dirname(require.resolve("mosca")) + "/public"))

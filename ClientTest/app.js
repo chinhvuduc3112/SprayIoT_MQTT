@@ -1,22 +1,22 @@
 var mqtt = require('mqtt')
-var client = mqtt.connect('mqtt://192.168.1.4')
+var client = mqtt.connect('mqtt://192.168.1.9')
 // ws://firstbrokerip:9001
 client.on('connect', function () {
-  console.log('abc')
-  client.subscribe('/updateDataActuator')
+  client.subscribe('/function')
 })
 
 client.on('message', function (topic, message) {
   // message is Buffer 
-  console.log(message.toString())
+  console.log(JSON.parse(message.toString()));
   // client.end()
 })
 
 // setInterval(() => {
+  // data tu Pi gui len khi co 
   let data = {
-    deviceNodeName: "Shum0x416303FF",
+    deviceNodeName: "Lux0x416303FF",
     time: 1509551626733,
-    data: 123456
+    data: 55
   };
   client.publish('/addDataSensor', JSON.stringify(data));
 //   client.publish('/addDataSensor', JSON.stringify({

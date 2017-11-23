@@ -1,6 +1,8 @@
 var models = require('./models'), 
     DataSensorHandler = require('./DataSensorHandler'), 
-    ExecConditonHandler = require('./ExecConditionHandler')
+    ExecConditonHandler = require('./ExecConditionHandler'),
+    ActuatorHandler = require('./ActuatorHandler'),
+    FunctionHandler = require('./FunctionHandler')
 
 module.exports = {
 
@@ -14,16 +16,19 @@ module.exports = {
         });
         if (deviceNode != null) {
             await DataSensorHandler.addDataSensor(data);
-            let compare = await ExecConditonHandler.updateExecutionConditionCompare(deviceNode._id, parseFloat(data.dataSen));
+            let compare = await ExecConditonHandler.updateExecutionConditionCompare(deviceNode._id, parseFloat(data.data));
             if (compare === true) {
-                let groupCondiId = await ExecConditonHandler.getGroupConditionIdByDeviceNodeId(deviceNode._id);
+                let groupCondi = await ExecConditonHandler.getGroupConditionByDeviceNodeId(deviceNode._id);
+                let groupCondiId = groupCondi._id;
                 let statusGroup = await ExecConditonHandler.getStatusGroupCondition(groupCondiId);
-                return status;
+                let execFunction = await FunctionHandler.getFunctionById(groupCondi.functionId);
+                let actuator = await ActuatorHandler.findAndUpdateActuatorById(execFunction.actuatorId, statusGroup, execFunction.activityDuration );
+                let returnObj = await Object.assign(actuator, {});
+                returnObj.function = await FunctionHandler.getFunctionByActuatorId(actuator._id);
+                return returnObj;
             }
         } else {
             return null;
         }
     }
-
-
 }
